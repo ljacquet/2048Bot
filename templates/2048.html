@@ -13,8 +13,11 @@
       crossorigin="anonymous"
     />
 
-    <link href="./2048.css" rel="stylesheet" />
-    <script src="./jquery-3.6.0.js"></script>
+    <link
+      href="{{ url_for('static', filename='2048.css') }}"
+      rel="stylesheet"
+    />
+    <script src="{{ url_for('static', filename='jquery-3.6.0.js')}}"></script>
     <title>2048 AI</title>
   </head>
   <body>
@@ -139,6 +142,7 @@
               type="checkbox"
               role="switch"
               id="flexSwitchCheckDefault"
+              onclick="activateAI()"
             />
             <label class="form-check-label" for="flexSwitchCheckDefault"
               >Enable AI</label
@@ -157,6 +161,6 @@
       crossorigin="anonymous"
     ></script>
 
-    <script src="2048.js"></script>
+    <script src="{{ url_for('static', filename='2048.js') }}"></script>
   </body>
 </html>

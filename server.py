@@ -1,36 +1,21 @@
-from http.server import SimpleHTTPRequestHandler, HTTPServer
-import time
+from flask import Flask, jsonify, render_template, request
+from flask.helpers import url_for
+from werkzeug.utils import send_file, send_from_directory
 
-hostName = "localhost"
-hostPort = 9000
+app = Flask(__name__)
 
-class AIServer(SimpleHTTPRequestHandler):
-    def do_GET(self):
-        response = 404
-        if self.path == '/':
-            self.path = '/2048/2048.html'
+@app.route('/')
+def serveIndex():
+    return render_template('2048.html')
 
-        if self.path.find("/2048/") > -1:
-            return SimpleHTTPRequestHandler.do_GET(self)
+@app.route('/tick', methods=['POST'])
+def ai_tick():
+    data = request.get_data(as_text=True)
+    print(data)
+    resp = {
+        'data': 'test'
+    }
+    return jsonify(resp)
 
-        self.send_response(404)
-    
-    def do_POST(self):
-        if self.path == '/tick':
-            self.send_response(200)
-            self.send_header("Content-type", "text/json")
-            self.end_headers()
-            self.wfile.write(bytes("{ 'data': 'Response Information' }", 'utf-8'))
-        else:
-            self.send_response(404)
-
-myServer = HTTPServer((hostName, hostPort), AIServer)
-print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
-
-try:
-    myServer.serve_forever()
-except KeyboardInterrupt:
-    pass
-
-myServer.server_close()
-print(time.asctime(), "Server Stops - %s:%s" % (hostName, hostPort))
+if __name__ == '__main__':
+    app.run()

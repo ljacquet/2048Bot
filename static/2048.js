@@ -1,5 +1,6 @@
 tiles = new Array(4 * 4).fill(0);
 currentScore = 0;
+aiMode = false;
 
 window.onload = () => {
   let highScore = localStorage.getItem("HighScore");
@@ -80,8 +81,10 @@ function checkForValidMoves() {
     }
   }
 
-  // No valid moves, reset game
-  resetGame();
+  // No valid moves, reset game (if in AI let ai code handle it)
+  if (!aiMode) {
+    resetGame();
+  }
   return false;
 }
 
@@ -288,3 +291,36 @@ function checkKey(e) {
 }
 
 document.onkeydown = checkKey;
+
+// AI HANDLING
+function getAIMove() {
+  return new Promise((resolve, reject) => {
+    $.ajax("/tick", {
+      data: JSON.stringify(tiles),
+      type: "POST",
+      success: (data) => {
+        resolve(data);
+      },
+      error: (err) => {
+        reject(err);
+      },
+    });
+  });
+}
+
+async function startAILoop() {
+  //while (aiMode) {
+  let move = await getAIMove();
+  console.log(move);
+
+  //}
+}
+
+function activateAI() {
+  if ($("#flexSwitchCheckDefault").prop("checked")) {
+    aiMode = true;
+    startAILoop();
+  } else {
+    aiMode = false;
+  }
+}
