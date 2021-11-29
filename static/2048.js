@@ -123,7 +123,6 @@ function spawnBlock() {
 }
 
 function handleColumn(column) {
-  console.log(JSON.stringify(column));
   updatedColumns = false;
   for (let i = 1; i < 4; i++) {
     let mainElement = column[i];
@@ -188,8 +187,6 @@ function handleArrowUp() {
       columnData.push({ x, y, value: getTileValue(x, y), combined: false });
     }
 
-    console.log(columnData);
-    console.log("Handling Column");
     if (handleColumn(columnData)) {
       shouldSpawnBlock = true;
     }
@@ -201,6 +198,8 @@ function handleArrowUp() {
     // We moved something, check board still valid
     checkForValidMoves();
   }
+
+  return shouldSpawnBlock;
 }
 
 function handleArrowRight() {
@@ -224,6 +223,8 @@ function handleArrowRight() {
     // We moved something, check board still valid
     checkForValidMoves();
   }
+
+  return shouldSpawnBlock;
 }
 
 function handleArrowDown() {
@@ -248,6 +249,8 @@ function handleArrowDown() {
     // We moved something, check board still valid
     checkForValidMoves();
   }
+
+  return shouldSpawnBlock;
 }
 
 function handleArrowLeft() {
@@ -271,28 +274,30 @@ function handleArrowLeft() {
     // We moved something, check board still valid
     checkForValidMoves();
   }
+
+  return shouldSpawnBlock;
 }
 
 function checkKey(e) {
   switch (e.key) {
     case "ArrowUp":
-      handleArrowUp();
-      break;
+      return handleArrowUp();
     case "ArrowRight":
-      handleArrowRight();
-      break;
+      return handleArrowRight();
     case "ArrowDown":
-      handleArrowDown();
-      break;
+      return handleArrowDown();
     case "ArrowLeft":
-      handleArrowLeft();
-      break;
+      return handleArrowLeft();
   }
+
+  return false;
 }
 
 document.onkeydown = checkKey;
 
 // AI HANDLING
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
 function getAIMove() {
   return new Promise((resolve, reject) => {
     $.ajax("/tick", {
@@ -309,11 +314,16 @@ function getAIMove() {
 }
 
 async function startAILoop() {
-  //while (aiMode) {
-  let move = await getAIMove();
-  console.log(move);
+  while (aiMode) {
+    let move = await getAIMove();
+    console.log(move.direction);
 
-  //}
+    if (!checkKey({ key: "Arrow" + move.direction })) {
+      if (!checkForValidMoves()) {
+        resetGame();
+      }
+    }
+  }
 }
 
 function activateAI() {
