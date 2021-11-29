@@ -1,0 +1,130 @@
+body {
+  color: #776e65;
+  background-color: #faf8ef;
+  text-align: center;
+}
+
+.scoreBox {
+  background-color: #bbada0;
+  border-radius: 15px;
+  color: #eee4da;
+}
+
+.gameCol {
+  width: 16vw;
+  height: 16vw;
+  max-width: 18vh;
+  max-height: 18vh;
+  background-color: #bbada0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gameCol-tl {
+  border-top-left-radius: 15px;
+}
+
+.gameCol-tr {
+  border-top-right-radius: 15px;
+}
+
+.gameCol-bl {
+  border-bottom-left-radius: 15px;
+}
+
+.gameCol-br {
+  border-bottom-right-radius: 15px;
+}
+
+.gameBox {
+  height: 12vw;
+  width: 12vw;
+  max-width: 14vh;
+  max-height: 14vh;
+  border-radius: 10px;
+
+  transition: background-color 0.05s;
+}
+
+.gameBox span {
+  font-weight: bold;
+  font-size: xx-large;
+  color: inherit;
+}
+
+.gameRow {
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameBox-0 {
+  background-color: #cdc1b4;
+}
+
+/* COLORS */
+.gameBox-2 {
+  background: #eee4da;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0),
+    inset 0 0 0 1px rgba(255, 255, 255, 0);
+}
+.gameBox-4 {
+  background: #eee1c9;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0),
+    inset 0 0 0 1px rgba(255, 255, 255, 0);
+}
+.gameBox-8 {
+  color: #f9f6f2;
+  background: #f3b27a;
+}
+.gameBox-16 {
+  color: #f9f6f2;
+  background: #f69664;
+}
+.gameBox-32 {
+  color: #f9f6f2;
+  background: #f77c5f;
+}
+.gameBox-64 {
+  color: #f9f6f2;
+  background: #f75f3b;
+}
+.gameBox-128 {
+  color: #f9f6f2;
+  background: #edd073;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2380952381),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1428571429);
+  font-size: 45px;
+}
+.gameBox-256 {
+  color: #f9f6f2;
+  background: #edcc62;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.3174603175),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1904761905);
+  font-size: 45px;
+}
+.gameBox-512 {
+  color: #f9f6f2;
+  background: #edc950;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.3968253968),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2380952381);
+  font-size: 45px;
+}
+.gameBox-1024 {
+  color: #f9f6f2;
+  background: #edc53f;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.4761904762),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2857142857);
+  font-size: 35px;
+}
+.gameBox-2042 {
+  color: #f9f6f2;
+  background: #edc22e;
+  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.5555555556),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3333333333);
+  font-size: 35px;
+}
