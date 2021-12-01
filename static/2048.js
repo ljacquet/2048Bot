@@ -124,6 +124,8 @@ function spawnBlock() {
 
 function handleColumn(column) {
   updatedColumns = false;
+  score = 0;
+
   for (let i = 1; i < 4; i++) {
     let mainElement = column[i];
     let modElement = column[i - 1];
@@ -144,6 +146,7 @@ function handleColumn(column) {
 
       // Update Score
       addToScore(mainElement.value + modElement.value);
+      score += mainElement.value + modElement.value;
 
       updateTile(
         modElement.x,
@@ -174,11 +177,12 @@ function handleColumn(column) {
     }
   }
 
-  return updatedColumns;
+  return { updatedColumns, score };
 }
 
 function handleArrowUp() {
   let shouldSpawnBlock = false;
+  let scoreIncrease = 0;
 
   for (let x = 0; x < 4; x++) {
     // build column object (0 is end being pushed into)
@@ -187,9 +191,13 @@ function handleArrowUp() {
       columnData.push({ x, y, value: getTileValue(x, y), combined: false });
     }
 
-    if (handleColumn(columnData)) {
+    let columnResponse = handleColumn(columnData);
+
+    if (columnResponse.updatedColumns) {
       shouldSpawnBlock = true;
     }
+
+    scoreIncrease += columnResponse.score;
   }
 
   if (shouldSpawnBlock) {
@@ -199,11 +207,12 @@ function handleArrowUp() {
     checkForValidMoves();
   }
 
-  return shouldSpawnBlock;
+  return { validMove: shouldSpawnBlock, scoreIncrease };
 }
 
 function handleArrowRight() {
   let shouldSpawnBlock = false;
+  let scoreIncrease = 0;
 
   for (let y = 0; y < 4; y++) {
     // build column object (0 is end being pushed into)
@@ -212,9 +221,13 @@ function handleArrowRight() {
       columnData.push({ x, y, value: getTileValue(x, y), combined: false });
     }
 
-    if (handleColumn(columnData)) {
+    let columnResponse = handleColumn(columnData);
+
+    if (columnResponse.updatedColumns) {
       shouldSpawnBlock = true;
     }
+
+    scoreIncrease += columnResponse.score;
   }
 
   if (shouldSpawnBlock) {
@@ -224,11 +237,12 @@ function handleArrowRight() {
     checkForValidMoves();
   }
 
-  return shouldSpawnBlock;
+  return { validMove: shouldSpawnBlock, scoreIncrease };
 }
 
 function handleArrowDown() {
   let shouldSpawnBlock = false;
+  let scoreIncrease = 0;
 
   for (let x = 0; x < 4; x++) {
     // build column object (0 is end being pushed into)
@@ -238,9 +252,13 @@ function handleArrowDown() {
       columnData.push({ x, y, value: getTileValue(x, y), combined: false });
     }
 
-    if (handleColumn(columnData)) {
+    let columnResponse = handleColumn(columnData);
+
+    if (columnResponse.updatedColumns) {
       shouldSpawnBlock = true;
     }
+
+    scoreIncrease += columnResponse.score;
   }
 
   if (shouldSpawnBlock) {
@@ -250,11 +268,12 @@ function handleArrowDown() {
     checkForValidMoves();
   }
 
-  return shouldSpawnBlock;
+  return { validMove: shouldSpawnBlock, scoreIncrease };
 }
 
 function handleArrowLeft() {
   let shouldSpawnBlock = false;
+  let scoreIncrease = 0;
 
   for (let y = 0; y < 4; y++) {
     // build column object (0 is end being pushed into)
@@ -263,9 +282,13 @@ function handleArrowLeft() {
       columnData.push({ x, y, value: getTileValue(x, y), combined: false });
     }
 
-    if (handleColumn(columnData)) {
+    let columnResponse = handleColumn(columnData);
+
+    if (columnResponse.updatedColumns) {
       shouldSpawnBlock = true;
     }
+
+    scoreIncrease += columnResponse.score;
   }
 
   if (shouldSpawnBlock) {
@@ -275,7 +298,7 @@ function handleArrowLeft() {
     checkForValidMoves();
   }
 
-  return shouldSpawnBlock;
+  return { validMove: shouldSpawnBlock, scoreIncrease };
 }
 
 function checkKey(e) {
@@ -290,7 +313,7 @@ function checkKey(e) {
       return handleArrowLeft();
   }
 
-  return false;
+  return { validMove: false, scoreIncrease: 0 };
 }
 
 document.onkeydown = checkKey;
@@ -298,10 +321,14 @@ document.onkeydown = checkKey;
 // AI HANDLING
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-function getAIMove() {
+function getAIMove(reward, training) {
   return new Promise((resolve, reject) => {
     $.ajax("/tick", {
-      data: JSON.stringify(tiles),
+      data: JSON.stringify({
+        state: tiles,
+        reward: reward,
+        training: training,
+      }),
       type: "POST",
       success: (data) => {
         resolve(data);
@@ -313,15 +340,23 @@ function getAIMove() {
   });
 }
 
+let training = true;
 async function startAILoop() {
+  let lastReward = -1;
   while (aiMode) {
-    let move = await getAIMove();
+    let move = await getAIMove(lastReward, training);
     console.log(move.direction);
 
-    if (!checkKey({ key: "Arrow" + move.direction })) {
+    let actionResponse = checkKey({ key: "Arrow" + move.direction });
+
+    if (!actionResponse.validMove) {
       if (!checkForValidMoves()) {
         resetGame();
       }
+
+      lastReward = -4;
+    } else {
+      lastReward = actionResponse.scoreIncrease;
     }
   }
 }

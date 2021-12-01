@@ -1,0 +1,16 @@
+{
+  "name": "2048headless",
+  "version": "1.0.0",
+  "description": "Headless version of 2048 website",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^4.4.0",
+    "ws": "^8.3.0"
+  }
+}
