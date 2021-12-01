@@ -33,9 +33,7 @@ def normalizeData(n):
 socketLock = Lock()
 async def runGameSim(genome, config, sio: socketio.AsyncClient):
     # Get initial State
-    socketLock.acquire()
     initialState = await sio.call("resetGame", {}, "/")
-    socketLock.release()
 
     state = initialState['state']
 
@@ -47,9 +45,7 @@ async def runGameSim(genome, config, sio: socketio.AsyncClient):
 
     while (shouldContinue):
         nnAction = net.activate(list(map(normalizeData, state)))
-        socketLock.acquire()
         gameStep = await sio.call("tick", { 'action': nnAction, 'state': state }, '/')
-        socketLock.release()
 
         state = gameStep['newState']
         largestTile = gameStep['largestTile']
@@ -93,7 +89,8 @@ def run(config_file):
     p.add_reporter(neat.Checkpointer(5))
 
     # Run for up to 300 generations.
-    winner = p.run(eval_genomes, 300)
+    winner = p.run(eval_genomes, 10)
+    print(p.best_genome)
 
     # Display the winning genome.
     # print('\nBest genome:\n{!s}'.format(winner))
