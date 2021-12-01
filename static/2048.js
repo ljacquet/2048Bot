@@ -24,12 +24,12 @@ while (startTile1X == startTile2X && startTile1Y == startTile2Y) {
 
 function getTileIndex(x, y) {
   if (x < 0 || x > 3) {
-    console.log("ERROR GETTING COORDS" + x + ":" + y);
+    // console.log("ERROR GETTING COORDS" + x + ":" + y);
     return -1;
   }
 
   if (y < 0 || y > 3) {
-    console.log("ERROR GETTING COORDS" + x + ":" + y);
+    // console.log("ERROR GETTING COORDS" + x + ":" + y);
     return -1;
   }
 
@@ -131,8 +131,8 @@ function handleColumn(column) {
     let modElement = column[i - 1];
 
     if (mainElement == null || modElement == null) {
-      console.error("NULL COLUMNS");
-      console.log(column);
+      // console.error("NULL COLUMNS");
+      // console.log(column);
       continue;
     }
 
@@ -345,9 +345,30 @@ async function startAILoop() {
   let lastReward = -1;
   while (aiMode) {
     let move = await getAIMove(lastReward, training);
-    console.log(move.direction);
+    actionArray = move
+      .map((value, i) => {
+        return {
+          direction: ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft"][i],
+          value: value,
+        };
+      })
+      .sort((a, b) => {
+        if (a == b) {
+          return Math.random() < 0.5;
+        }
 
-    let actionResponse = checkKey({ key: "Arrow" + move.direction });
+        return a.value < b.value;
+      });
+
+    let actionIndex = 0;
+    let actionResponse;
+    do {
+      actionResponse = checkKey({
+        key: actionArray[actionIndex].direction,
+      });
+
+      actionIndex++;
+    } while (!actionResponse.validMove && actionIndex < 4);
 
     if (!actionResponse.validMove) {
       if (!checkForValidMoves()) {
