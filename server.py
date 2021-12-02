@@ -13,7 +13,7 @@ import neat
 import pickle
 
 app = Flask(__name__)
-p = neat.Checkpointer.restore_checkpoint('./NEAT/neat-checkpoint-9')
+p = neat.Checkpointer.restore_checkpoint('./NEAT/neat-checkpoint-99')
 
 with open('./NEAT/real_winner.pkl', 'rb') as f:
     genome = pickle.load(f)

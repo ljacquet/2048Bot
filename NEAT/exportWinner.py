@@ -70,7 +70,7 @@ async def eval_genomes_async(genomes, config):
 def eval_genomes(genomes, config):
     asyncio.run(eval_genomes_async(genomes, config))
 
-p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-9')
+p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-99')
 winner = p.run(eval_genomes, 1)
 
 pickle.dump(winner, open('winner.pkl', 'wb'))

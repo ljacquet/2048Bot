@@ -28,37 +28,42 @@ def normalizeData(n):
     if (n == 0):
         return 0
     
-    return math.log2(n) / 11
+    return n * 2
+    # return math.log2(n) / 11
 
-socketLock = Lock()
 async def runGameSim(genome, config, sio: socketio.AsyncClient):
-    # Get initial State
-    initialState = await sio.call("resetGame", {}, "/")
-
-    state = initialState['state']
-
+    totalReward = 0
+    
     net = neat.nn.FeedForwardNetwork.create(genome, config)
+    # Run Five iterations and get average score
+    for i in range(0, 3):
+        # Get initial State
+        initialState = await sio.call("resetGame", {}, "/")
 
-    shouldContinue = True
+        state = initialState['state']
 
-    reward = 0
+        shouldContinue = True
 
-    while (shouldContinue):
-        nnAction = net.activate(list(map(normalizeData, state)))
-        gameStep = await sio.call("tick", { 'action': nnAction, 'state': state }, '/')
+        reward = 0
 
-        state = gameStep['newState']
-        largestTile = gameStep['largestTile']
-        reward += gameStep['reward']
+        while (shouldContinue):
+            nnAction = net.activate(list(map(normalizeData, state)))
+            gameStep = await sio.call("tick", { 'action': nnAction, 'state': state }, '/')
 
-        if (largestTile == 2048):
-            shouldContinue = False
-        
-        if (gameStep['gameOver']):
-            shouldContinue = False
+            state = gameStep['newState']
+            largestTile = gameStep['largestTile']
+            reward += gameStep['reward']
 
-    # print(reward)
-    return (normalizeData(largestTile) + (reward / 10000)) / 2 # largest tile and reward split evenly
+            if (largestTile == 2048):
+                shouldContinue = False
+            
+            if (gameStep['gameOver']):
+                shouldContinue = False
+
+        # print(reward)
+        totalReward += (normalizeData(largestTile) + reward)
+    # return (normalizeData(largestTile) + (reward / 10000)) / 2 # largest tile and reward split evenly
+    return totalReward / 5
 
 async def eval_genomes_async(genomes, config):
     sio = socketio.AsyncClient()
@@ -81,6 +86,7 @@ def run(config_file):
 
     # Create the population, which is the top-level object for a NEAT run.
     p = neat.Population(config)
+    # p = neat.Checkpointer.restore_checkpoint('./neat-checkpoint-99')
 
     # Add a stdout reporter to show progress in the terminal.
     p.add_reporter(neat.StdOutReporter(True))
@@ -89,7 +95,7 @@ def run(config_file):
     p.add_reporter(neat.Checkpointer(5))
 
     # Run for up to 300 generations.
-    winner = p.run(eval_genomes, 10)
+    winner = p.run(eval_genomes, 100)
     print(p.best_genome)
 
     # Display the winning genome.
