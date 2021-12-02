@@ -1,3 +1,4 @@
+import math
 from flask import Flask, json, jsonify, render_template, request
 from flask.helpers import url_for
 from werkzeug.utils import send_file, send_from_directory
@@ -13,12 +14,12 @@ import neat
 import pickle
 
 app = Flask(__name__)
-p = neat.Checkpointer.restore_checkpoint('./NEAT/neat-checkpoint-99')
+p = neat.Checkpointer.restore_checkpoint('./NEAT/neat-checkpoint-106')
 
 with open('./NEAT/real_winner.pkl', 'rb') as f:
     genome = pickle.load(f)
 
-net = neat.nn.FeedForwardNetwork.create(genome, p.config)
+net = neat.nn.RecurrentNetwork.create(genome, p.config)
 
 @app.route('/')
 def serveIndex():
@@ -28,7 +29,7 @@ def serveIndex():
 def ai_tick():
     data = request.get_data(as_text=True)
     data = json.loads(data)
-    
+
     action = net.activate(data['state'])
 
     # direction = np.where(action == np.amax(action)) #random.randint(0, 3)

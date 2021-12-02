@@ -26,16 +26,16 @@ def normalizeData(n):
     if (n == 0):
         return 0
     
-    return math.log2(n) / 11
+    return n * 2
+    # return math.log2(n) / 11
 
-socketLock = Lock()
 async def runGameSim(genome, config, sio: socketio.AsyncClient):
     # Get initial State
     initialState = await sio.call("resetGame", {}, "/")
 
     state = initialState['state']
 
-    net = neat.nn.FeedForwardNetwork.create(genome, config)
+    net = neat.nn.RecurrentNetwork.create(genome, config)
 
     shouldContinue = True
 
@@ -56,7 +56,8 @@ async def runGameSim(genome, config, sio: socketio.AsyncClient):
             shouldContinue = False
 
     # print(reward)
-    return (normalizeData(largestTile) + (reward / 10000)) / 2 # largest tile and reward split evenly
+    return (normalizeData(largestTile) + reward)
+    # return (normalizeData(largestTile) + (reward / 10000)) / 2 # largest tile and reward split evenly
 
 async def eval_genomes_async(genomes, config):
     sio = socketio.AsyncClient()
@@ -70,7 +71,7 @@ async def eval_genomes_async(genomes, config):
 def eval_genomes(genomes, config):
     asyncio.run(eval_genomes_async(genomes, config))
 
-p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-99')
+p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-106')
 winner = p.run(eval_genomes, 1)
 
 pickle.dump(winner, open('winner.pkl', 'wb'))

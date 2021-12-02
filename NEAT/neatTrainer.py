@@ -32,9 +32,10 @@ def normalizeData(n):
 async def runGameSim(genome, config, sio: socketio.AsyncClient):
     totalReward = 0
     
-    net = neat.nn.RecurrentNetwork(genome, config) #.FeedForwardNetwork.create(genome, config)
     # Run Five iterations and get average score
     for i in range(0, 3):
+        net = neat.nn.RecurrentNetwork.create(genome, config) #.FeedForwardNetwork.create(genome, config)
+
         # Get initial State
         initialState = await sio.call("resetGame", {}, "/")
 
@@ -61,7 +62,7 @@ async def runGameSim(genome, config, sio: socketio.AsyncClient):
         # print(reward)
         totalReward += (normalizeData(largestTile) + reward)
     # return (normalizeData(largestTile) + (reward / 10000)) / 2 # largest tile and reward split evenly
-    return totalReward / 5
+    return totalReward / 3
 
 async def eval_genomes_async(genomes, config):
     sio = socketio.AsyncClient()
