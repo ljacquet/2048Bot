@@ -2,13 +2,8 @@
 
 [NEAT]
 fitness_criterion     = max
-<<<<<<< HEAD
 fitness_threshold     = 14000
 pop_size              = 200
-=======
-fitness_threshold     = 1
-pop_size              = 500
->>>>>>> 61d83369660f41acb5f41810ad243cb84351a502
 reset_on_extinction   = False
 
 [DefaultGenome]
@@ -43,7 +38,7 @@ conn_delete_prob        = 0.5
 enabled_default         = True
 enabled_mutate_rate     = 0.01
 
-feed_forward            = True
+feed_forward            = False
 initial_connection      = partial_direct 0.5
 
 # node add/remove rates

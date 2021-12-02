@@ -32,7 +32,7 @@ def normalizeData(n):
 async def runGameSim(genome, config, sio: socketio.AsyncClient):
     totalReward = 0
     
-    net = neat.nn.FeedForwardNetwork.create(genome, config)
+    net = neat.nn.RecurrentNetwork(genome, config) #.FeedForwardNetwork.create(genome, config)
     # Run Five iterations and get average score
     for i in range(0, 3):
         # Get initial State
@@ -94,7 +94,7 @@ def run(config_file):
 
     # Run for up to 300 generations.
     winner = p.run(eval_genomes, 10000)
-    
+
     print(p.best_genome)
 
     # Display the winning genome.
