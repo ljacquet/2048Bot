@@ -9,8 +9,6 @@ import neat
 from neat import genome
 import visualize
 
-import requests
-
 import socketio
 
 import asyncio
@@ -92,10 +90,11 @@ def run(config_file):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(5))
+    p.add_reporter(neat.Checkpointer(generation_interval=25, time_interval_seconds=240))
 
     # Run for up to 300 generations.
-    winner = p.run(eval_genomes, 100)
+    winner = p.run(eval_genomes, 10000)
+    
     print(p.best_genome)
 
     # Display the winning genome.
