@@ -1,4 +1,10 @@
 # 2048Bot
+## About
+This was a project for my AI course in my junior year, this repository was created under a short time period and has portions that are not ready to be used outside of an Academic situation.
+
+## TODO
+Refactor Code Base
+
 
 ## Python
 pip install neat-python
